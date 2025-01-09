@@ -20,7 +20,7 @@ st.markdown(
         position: absolute;
         top: 0;
         right: 0;
-        width: 100px;  /* Ajuster la taille de l'image ici */
+        width: 100px; 
     }
     </style>
     """, 
@@ -35,5 +35,17 @@ st.markdown("<p class='texte'>Les Temps d'intervention de la Brigade des Pompier
 
 st.image(r"C:\Users\Meylouu\Brigade Pompier\LBP1.jpg", use_container_width=True)
 
+# Mettre des Onglets
 
+tab1, tab2, tab3 = st.tabs(["Onglet 1", "Onglet 2", "Onglet 3"]) 
+with tab1: 
+    st.header("Contenu de l'Onglet 1") 
+    st.write("Voici le contenu du premier onglet.") 
 
+with tab2: 
+    st.header("Contenu de l'Onglet 2") 
+    st.write("Voici le contenu du deuxième onglet.") 
+    
+with tab3: 
+    st.header("Contenu de l'Onglet 3") 
+    st.write("Voici le contenu du troisième onglet.")
