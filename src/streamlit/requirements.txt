@@ -1,0 +1,6 @@
+joblib==1.4.2
+pandas==2.2.3
+python-dateutil==2.9.0.post0
+streamlit==1.41.1
+urllib3==2.2.3
+xgboost==2.1.3
