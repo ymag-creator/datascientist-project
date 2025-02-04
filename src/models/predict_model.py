@@ -49,7 +49,7 @@ class PredictModel:
         month,
         day_of_week,
     ):
-        """Crée le dataframe de prédiction
+        """Crée un dataframe de données brutes utilisable pour la prédiction
         Args:
             year (_type_): Année
             hour (_type_): Heure
@@ -87,6 +87,15 @@ class PredictModel:
     # stockées sur disque, dans "PreProcessing Reduce categories"
     # Concerne 3 colonnes quiu avaient de nombreuses valeurs
     def reduceCategValues(self, df, col_cible_type):
+        """Réduit les valeurs catégorielles, en remplaçant les valeurs non conservées par "OTHER" 
+
+        Args:
+            df (_type_): Dataframe
+            col_cible_type (_type_): Type de colonne cible
+
+        Returns:
+            _type_: Le dataframe modifié
+        """
         df_keep = pd.read_csv(
             os.path.join(self.path, f"keep {col_cible_type}.csv"), sep=";"
         )
@@ -129,6 +138,15 @@ class PredictModel:
         return df_new
 
     def apply_encoder(self, df, col_cible_type):
+        """Applique l'encodage des colonnes catégorielles
+
+        Args:
+            df (_type_): Dataframe
+            col_cible_type (_type_): Type de colonne cible
+
+        Returns:
+            _type_: Le dataframe modifié
+        """
         df_new = df.copy()
         # Encodage de l'année
         encoder = joblib.load(os.path.join(self.path, f"_ce_{col_cible_type}_OrdinalEncoder.pkl"))
@@ -161,6 +179,14 @@ class PredictModel:
         return df_new
 
     def predict(self, df):
+        """Prédit les 9 colonnes cibles
+
+        Args:
+            df (_type_): Dataframe de données brutes
+
+        Returns:
+            _type_: Les prévisioons de temps de préparation, trajet, et sur site
+        """
         # Prédit les colonnes cibles pour chaque type
         results = {}
         # Boucle sur les types de cibles
@@ -186,9 +212,9 @@ class PredictModel:
                 print("///////////////////////////", "cible", col_cible)
                 # Charge le modèle
                 xgb = joblib.load(os.path.join(self.path, f"_XGBoost_{col_cible}.pkl"))
-                # Predict
+                # Predit
                 y_pred = xgb.predict(X)
-                # Ajoute au tableau des résultats
+                # Ajoute la valeur au tableau des résultats
                 results[col_cible] = y_pred[0]
                 print(results)
         return [results]
