@@ -48,10 +48,32 @@ df = model.create_dataframe(select_date.year, select_time.hour, select_property_
                             select_stop_code, select_date.month, select_date.weekday() + 1)
 st.dataframe(df.head(10))
 
+
+def format_seconds(seconds):
+    """Formatage intelligent des secondes
+
+    Args:
+        seconds (_type_): Temps en secondes à formater
+
+    Returns:
+        _type_: un temps formaté
+    """
+    # si moins d'une minute, retoune le temps en secondes
+    if seconds < 60:
+        return f"{round(seconds)} sec"
+    # converti en minutes
+    minutes, sec = divmod(seconds, 60)
+    # si moins d'une heure, retourne le temps en minutes et secondes
+    if minutes < 60:
+        return f"{round(minutes)} min {round(sec)} sec"
+    # si plus d'une heure, retourne le temps en heures, minutes et secondes
+    hours, minutes = divmod(minutes, 60)
+    return f"{round(hours)} h {round(minutes)} min {round(sec)} sec"
+
 # Prédiction
 st.header("Ask To Zoltar")
 # Colonne 1 pour l'image
-row1 = st.columns(2)
+row1 = st.columns([1,2])
 col1 = row1[0].container(height=600)
 col1.image(os.path.join(path, "Zoltar.jpg"), width=280)
 # Colonne 2 pour les prédictions
@@ -69,6 +91,9 @@ new_names = {"TurnoutTimeSeconds_min": "Temps de préparation minimum",
     "PumpSecondsOnSite_mean": "Temps sur site median",
     "PumpSecondsOnSite_max": "Temps sur site maximum"}
 result_df = result_df.rename(new_names, axis = 1)
-# Affiche les prédictions dasn un DF 
+# Dupliquez la 1ere ligne et formate les temps
+result_df = pd.concat([result_df.iloc[[0]], result_df], ignore_index=True)
+result_df.iloc[0] = result_df.iloc[0].apply(format_seconds)
+# Affiche les prédictions dasn un DF
 col2.write("Prédictions (en secondes)")
-col2.dataframe(result_df.T)
+col2.dataframe(result_df.T.rename({0:"Temps", 1:"Secondes"}, axis = 1))
