@@ -71,7 +71,7 @@ def format_seconds(seconds):
     return f"{round(hours)} h {round(minutes)} min {round(sec)} sec"
 
 # Prédiction
-st.header("Ask To Zoltar")
+st.header("Les prédictions de Zoltar")
 # Colonne 1 pour l'image
 row1 = st.columns([1,2])
 col1 = row1[0].container(height=600)
