@@ -13,7 +13,9 @@ if dir_path not in sys.path:
 from models.predict_model import PredictModel
 
 # vérifie les chemins
-print("Répertoire courant:", os.getcwd())  # Vérifie si Streamlit tourne bien depuis le bon dossier
+print(
+    "Répertoire courant:", os.getcwd()
+)  # Vérifie si Streamlit tourne bien depuis le bon dossier
 print("sys.path:", sys.path)  # Vérifie les chemins de recherche des modules
 # Stock le chemin des fichiers du streamlit
 path = os.path.dirname(__file__)
@@ -35,24 +37,44 @@ print(postcode_district.columns)
 if "select_postcode_district" not in st.session_state:
     # st.session_state.select_postcode_district = postcode_district.iloc[0][0]
     st.session_state.select_postcode_district = 0
-    print("-----st.session_state.select_postcode_district", st.session_state.select_postcode_district)
-select_postcode_district = st.selectbox("Choisissez un Code Post District :", postcode_district, index=int(st.session_state.select_postcode_district))
+    print(
+        "-----st.session_state.select_postcode_district",
+        st.session_state.select_postcode_district,
+    )
+select_postcode_district = st.selectbox(
+    "Choisissez un Code Post District :",
+    postcode_district,
+    index=int(st.session_state.select_postcode_district),
+)
 
 # property_type
 property_type = pd.read_csv(os.path.join(path, "property_type.csv"))
 if "select_property_type" not in st.session_state:
     # st.session_state.select_postcode_district = postcode_district.iloc[0][0]
     st.session_state.select_property_type = 0
-    print("-----st.session_state.select_property_type", st.session_state.select_property_type)
-select_property_type = st.selectbox("Choisissez un Type de Propriété :", property_type, index=int(st.session_state.select_property_type))
+    print(
+        "-----st.session_state.select_property_type",
+        st.session_state.select_property_type,
+    )
+select_property_type = st.selectbox(
+    "Choisissez un Type de Propriété :",
+    property_type,
+    index=int(st.session_state.select_property_type),
+)
 
 # stop_code
 stop_code = pd.read_csv(os.path.join(path, "stop_code.csv"))
 if "select_stop_code" not in st.session_state:
     # st.session_state.select_postcode_district = postcode_district.iloc[0][0]
     st.session_state.select_stop_code = 0
-    print("-----st.session_state.select_property_type", st.session_state.select_stop_code)
-select_stop_code = st.selectbox("Choisissez un Type d'incident :", stop_code, index=int(st.session_state.select_stop_code))
+    print(
+        "-----st.session_state.select_property_type", st.session_state.select_stop_code
+    )
+select_stop_code = st.selectbox(
+    "Choisissez un Type d'incident :",
+    stop_code,
+    index=int(st.session_state.select_stop_code),
+)
 
 rowDateTime = st.columns([1, 1])
 # select_date
@@ -60,18 +82,35 @@ if "select_date" not in st.session_state:
     # st.session_state.select_postcode_district = postcode_district.iloc[0][0]
     st.session_state.select_date = date.today()
     print("-----st.session_state.select_property_type", st.session_state.select_date)
-select_date = rowDateTime[0].container(height=100).date_input("Choisissez une date", st.session_state.select_date, format="DD/MM/YYYY")
+select_date = (
+    rowDateTime[0]
+    .container(height=100)
+    .date_input(
+        "Choisissez une date", st.session_state.select_date, format="DD/MM/YYYY"
+    )
+)
 # select_time
 if "select_time" not in st.session_state:
     # st.session_state.select_postcode_district = postcode_district.iloc[0][0]
     st.session_state.select_time = datetime.now()
     print("-----st.session_state.select_property_type", st.session_state.select_date)
-select_time = rowDateTime[1].container(height=100).time_input("Choisissez l'heure", st.session_state.select_time)
+select_time = (
+    rowDateTime[1]
+    .container(height=100)
+    .time_input("Choisissez l'heure", st.session_state.select_time)
+)
 
 # Crée le dataframe de prédiction
 st.write("Dataframe")
-df = model.create_dataframe(select_date.year, select_time.hour, select_property_type, select_postcode_district,
-                            select_stop_code, select_date.month, select_date.weekday() + 1)
+df = model.create_dataframe(
+    select_date.year,
+    select_time.hour,
+    select_property_type,
+    select_postcode_district,
+    select_stop_code,
+    select_date.month,
+    select_date.weekday() + 1,
+)
 st.dataframe(df.head(10))
 
 
@@ -100,7 +139,7 @@ def change_incident(new_property_type, new_stop_code, refresh=True):
     # st.session_state.select_postcode_district = 16
     print(st.session_state.select_postcode_district)
     # st.rerun()   # Recharger l'interface avec la nouvelle valeur sélectionnée
-    if(refresh):
+    if refresh:
         st.rerun()
 
 
@@ -111,7 +150,7 @@ def change_date(date, refresh=True):
     # st.session_state.select_postcode_district = 16
     print(st.session_state.select_date)
     # st.rerun()   # Recharger l'interface avec la nouvelle valeur sélectionnée
-    if(refresh):
+    if refresh:
         st.rerun()
 
 
@@ -122,31 +161,32 @@ def change_time(time, refresh=True):
     # st.session_state.select_postcode_district = 16
     print(st.session_state.select_time)
     # st.rerun()   # Recharger l'interface avec la nouvelle valeur sélectionnée
-    if(refresh):
+    if refresh:
         st.rerun()
+
 
 st.write("Exemples ")
 
 rowButtons = st.columns([1, 1])
-c11 = rowButtons[0].container(height=170)
-c12 = rowButtons[1].container(height=170)
+c11 = rowButtons[0].container(height=220)
+c12 = rowButtons[1].container(height=220)
 
 if c11.button("1 RAILWAY TRACKSIDE VEGETATION / PRIMARY FIRE "):
-    change_incident("RAILWAY TRACKSIDE VEGETATION","PRIMARY FIRE")
+    change_incident("RAILWAY TRACKSIDE VEGETATION", "PRIMARY FIRE")
 if c12.button("2 HOUSE - SINGLE OCCUPANCY / CHIMNEY FIRE "):
     change_incident("HOUSE - SINGLE OCCUPANCY", "CHIMNEY FIRE")
 if c11.button("3 BULK WASTE STORAGE / SST-LIFT RELEASE"):
     change_incident("BULK WASTE STORAGE", "SST-LIFT RELEASE")
 if c12.button("4  BULK WASTE STORAGE / ALARM "):
     change_incident("BULK WASTE STORAGE", "ALARM")
-if st.button("5 VEHICLE REPAIR WORKSHOP / ALARM"):
+if c11.button("5 VEHICLE REPAIR WORKSHOP / ALARM"):
     change_incident("VEHICLE REPAIR WORKSHOP", "ALARM")
 
 rowButtons2 = st.columns([1, 1, 1, 1])
-c21 = rowButtons2[0].container(height=170)
-c22 = rowButtons2[1].container(height=170)
-c23 = rowButtons2[2].container(height=170)
-c24 = rowButtons2[3].container(height=170)
+c21 = rowButtons2[0].container(height=130)
+c22 = rowButtons2[1].container(height=130)
+c23 = rowButtons2[2].container(height=130)
+c24 = rowButtons2[3].container(height=130)
 
 if c21.button("BR1"):
     change_postcode_district("BR1")
@@ -189,18 +229,20 @@ def format_seconds(seconds):
     hours, minutes = divmod(minutes, 60)
     return f"{round(hours)} h {round(minutes)} min {round(sec)} sec"
 
+
 # Prédiction
 st.header("Les prédictions de Zoltar")
 # Colonne 1 pour l'image
-row1 = st.columns([1,2])
-col1 = row1[0].container(height=600)
+row1 = st.columns([1, 2])
+col1 = row1[0].container(height=440)
 col1.image(os.path.join(path, "Zoltar.jpg"), width=280)
 # Colonne 2 pour les prédictions
-col2 = row1[1].container(height=600)
+col2 = row1[1].container(height=440)
 result = model.predict(df)
 result_df = pd.DataFrame(result)
 # Renomme les colonnes pour une meilleure lisibilité
-new_names = {"TurnoutTimeSeconds_min": "Temps de préparation minimum",
+new_names = {
+    "TurnoutTimeSeconds_min": "Temps de préparation minimum",
     "TurnoutTimeSeconds_mean": "Temps de préparation median",
     "TurnoutTimeSeconds_max": "Temps de préparation maximum",
     "TravelTimeSeconds_min": "Temps de trajet minimum",
@@ -208,11 +250,12 @@ new_names = {"TurnoutTimeSeconds_min": "Temps de préparation minimum",
     "TravelTimeSeconds_max": "Temps de trajet maximum",
     "PumpSecondsOnSite_min": "Temps sur site minimum",
     "PumpSecondsOnSite_mean": "Temps sur site median",
-    "PumpSecondsOnSite_max": "Temps sur site maximum"}
-result_df = result_df.rename(new_names, axis = 1)
+    "PumpSecondsOnSite_max": "Temps sur site maximum",
+}
+result_df = result_df.rename(new_names, axis=1)
 # Dupliquez la 1ere ligne et formate les temps
 result_df = pd.concat([result_df.iloc[[0]], result_df], ignore_index=True)
 result_df.iloc[0] = result_df.iloc[0].apply(format_seconds)
 # Affiche les prédictions dasn un DF
 col2.write("Prédictions (en secondes)")
-col2.dataframe(result_df.T.rename({0:"Temps", 1:"Secondes"}, axis = 1))
+col2.dataframe(result_df.T.rename({0: "Temps", 1: "Secondes"}, axis=1))
