@@ -29,24 +29,143 @@ st.title("Temps de Réponse de la Brigade des Pompiers de Londres")
 st.image(os.path.join(path, "districts copie.jpg"), use_container_width=True)
 
 # Champs de saisie
+# postcode_district
 postcode_district = pd.read_csv(os.path.join(path, "postcode_district.csv"))
-select_postcode_district = st.selectbox("Choisissez un Code Post District :", postcode_district)
+print(postcode_district.columns)
+if "select_postcode_district" not in st.session_state:
+    # st.session_state.select_postcode_district = postcode_district.iloc[0][0]
+    st.session_state.select_postcode_district = 0
+    print("-----st.session_state.select_postcode_district", st.session_state.select_postcode_district)
+select_postcode_district = st.selectbox("Choisissez un Code Post District :", postcode_district, index=int(st.session_state.select_postcode_district))
 
+# property_type
 property_type = pd.read_csv(os.path.join(path, "property_type.csv"))
-select_property_type = st.selectbox("Choisissez un Type de Propriété :", property_type)
+if "select_property_type" not in st.session_state:
+    # st.session_state.select_postcode_district = postcode_district.iloc[0][0]
+    st.session_state.select_property_type = 0
+    print("-----st.session_state.select_property_type", st.session_state.select_property_type)
+select_property_type = st.selectbox("Choisissez un Type de Propriété :", property_type, index=int(st.session_state.select_property_type))
 
+# stop_code
 stop_code = pd.read_csv(os.path.join(path, "stop_code.csv"))
-select_stop_code = st.selectbox("Choisissez un Type d'incident :", stop_code)
+if "select_stop_code" not in st.session_state:
+    # st.session_state.select_postcode_district = postcode_district.iloc[0][0]
+    st.session_state.select_stop_code = 0
+    print("-----st.session_state.select_property_type", st.session_state.select_stop_code)
+select_stop_code = st.selectbox("Choisissez un Type d'incident :", stop_code, index=int(st.session_state.select_stop_code))
 
-select_date = st.date_input("Choisissez une date", date.today(), format="DD/MM/YYYY")
-
-select_time = st.time_input("Choisissez l'heure", datetime.now())
+rowDateTime = st.columns([1, 1])
+# select_date
+if "select_date" not in st.session_state:
+    # st.session_state.select_postcode_district = postcode_district.iloc[0][0]
+    st.session_state.select_date = date.today()
+    print("-----st.session_state.select_property_type", st.session_state.select_date)
+select_date = rowDateTime[0].container(height=100).date_input("Choisissez une date", st.session_state.select_date, format="DD/MM/YYYY")
+# select_time
+if "select_time" not in st.session_state:
+    # st.session_state.select_postcode_district = postcode_district.iloc[0][0]
+    st.session_state.select_time = datetime.now()
+    print("-----st.session_state.select_property_type", st.session_state.select_date)
+select_time = rowDateTime[1].container(height=100).time_input("Choisissez l'heure", st.session_state.select_time)
 
 # Crée le dataframe de prédiction
 st.write("Dataframe")
 df = model.create_dataframe(select_date.year, select_time.hour, select_property_type, select_postcode_district,
                             select_stop_code, select_date.month, select_date.weekday() + 1)
 st.dataframe(df.head(10))
+
+
+# Fonction pour changer la valeur de la selectbox
+def change_postcode_district(new_postcode_district, refresh=True):
+    st.session_state.select_postcode_district = int(
+        postcode_district[postcode_district["0"] == new_postcode_district].index[0]
+    )
+    # st.session_state.select_postcode_district = 16
+    print(st.session_state.select_postcode_district)
+    # st.rerun()   # Recharger l'interface avec la nouvelle valeur sélectionnée
+    if refresh:
+        st.rerun()
+
+
+# Fonction pour changer la valeur de la selectbox
+def change_incident(new_property_type, new_stop_code, refresh=True):
+    # select_property_type = "RAILWAY TRACKSIDE VEGETATION"
+    # st.session_state.select_postcode_district = "CR44"
+    st.session_state.select_property_type = int(
+        property_type[property_type["0"] == new_property_type].index[0]
+    )
+    st.session_state.select_stop_code = int(
+        stop_code[stop_code["0"] == new_stop_code].index[0]
+    )
+    # st.session_state.select_postcode_district = 16
+    print(st.session_state.select_postcode_district)
+    # st.rerun()   # Recharger l'interface avec la nouvelle valeur sélectionnée
+    if(refresh):
+        st.rerun()
+
+
+def change_date(date, refresh=True):
+    # select_property_type = "RAILWAY TRACKSIDE VEGETATION"
+    # st.session_state.select_postcode_district = "CR44"
+    st.session_state.select_date = date
+    # st.session_state.select_postcode_district = 16
+    print(st.session_state.select_date)
+    # st.rerun()   # Recharger l'interface avec la nouvelle valeur sélectionnée
+    if(refresh):
+        st.rerun()
+
+
+def change_time(time, refresh=True):
+    # select_property_type = "RAILWAY TRACKSIDE VEGETATION"
+    # st.session_state.select_postcode_district = "CR44"
+    st.session_state.select_time = time
+    # st.session_state.select_postcode_district = 16
+    print(st.session_state.select_time)
+    # st.rerun()   # Recharger l'interface avec la nouvelle valeur sélectionnée
+    if(refresh):
+        st.rerun()
+
+st.write("Exemples ")
+
+rowButtons = st.columns([1, 1])
+c11 = rowButtons[0].container(height=170)
+c12 = rowButtons[1].container(height=170)
+
+if c11.button("1 RAILWAY TRACKSIDE VEGETATION / PRIMARY FIRE "):
+    change_incident("RAILWAY TRACKSIDE VEGETATION","PRIMARY FIRE")
+if c12.button("2 HOUSE - SINGLE OCCUPANCY / CHIMNEY FIRE "):
+    change_incident("HOUSE - SINGLE OCCUPANCY", "CHIMNEY FIRE")
+if c11.button("3 BULK WASTE STORAGE / SST-LIFT RELEASE"):
+    change_incident("BULK WASTE STORAGE", "SST-LIFT RELEASE")
+if c12.button("4  BULK WASTE STORAGE / ALARM "):
+    change_incident("BULK WASTE STORAGE", "ALARM")
+if st.button("5 VEHICLE REPAIR WORKSHOP / ALARM"):
+    change_incident("VEHICLE REPAIR WORKSHOP", "ALARM")
+
+rowButtons2 = st.columns([1, 1, 1, 1])
+c21 = rowButtons2[0].container(height=170)
+c22 = rowButtons2[1].container(height=170)
+c23 = rowButtons2[2].container(height=170)
+c24 = rowButtons2[3].container(height=170)
+
+if c21.button("BR1"):
+    change_postcode_district("BR1")
+if c22.button("CR5"):
+    change_postcode_district("CR5")
+
+if c23.button("Samedi"):
+    change_date(date(2025, 2, 22))
+if c24.button("Aujourd'hui"):
+    change_date(date(2025, 2, 18))
+
+if c21.button("0h30"):
+    change_time(datetime(2025, 2, 22, 0, 30))
+if c22.button("7h30"):
+    change_time(datetime(2025, 2, 22, 7, 30))
+
+if c23.button("BR8 à 17h30"):
+    change_time(datetime(2025, 2, 22, 17, 30), False)
+    change_postcode_district("BR8")
 
 
 def format_seconds(seconds):
